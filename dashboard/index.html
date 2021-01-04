@@ -72,114 +72,120 @@
                     <div class="col-xl-12" v-for="(forms,key) in template.forms">
                         <div v-if="key === section" class="row">
                             <div class="col-xl-12" v-for="(form,index) in forms">
-                                <div class="table-responsive" v-if="!isEdit && form.mark.multiple != 'false'">
-                                    <table class="table mb-0">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">id</th>
-                                            <th scope="col">标题</th>
-                                            <th scope="col">摘要</th>
-                                            <th scope="col">日期</th>
-                                            <th scope="col">
-                                                编辑内容
-                                            </th>
-                                            <th scope="col">
-                                                删除内容
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr v-for="(row,row_index) in template.rows[form.mark.key]">
-                                            <th scope="row">{{row.content.id}}</th>
-                                            <td>{{row.content.title}}</td>
-                                            <td>{{row.content.abstract}}</td>
-                                            <td>{{row.content.updated_at}}</td>
-                                            <td>
-                                                <div class="btn-group d-none d-sm-inline-block">
-                                                    <button @click="()=>editRow(row_index,index,form.mark.mark_section,form.mark.mark_env)"
-                                                            type="button"
-                                                            class="btn btn-soft-info btn-sm">编辑
-                                                    </button>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group d-none d-sm-inline-block">
-                                                    <button @click="()=>deleteRow(row.content.id)"
-                                                            type="button"
-                                                            class="btn btn-soft-danger btn-sm">删除
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div v-if="isEdit || form.mark.multiple == 'false'">
-                                    <h4 v-if="form.mark.mark_env_label"
-                                        class="mb-3 header-title mt-0">{{form.mark.mark_env_label}}</h4>
-                                    <div class="form-group" v-if="form.mark.mark_title">
-                                        <input type="text" class="form-control" v-model="form.submit.content.title"
-                                               aria-describedby="" placeholder="请输入内容">
-                                    </div>
-                                    <div class="form-group" v-if="form.mark.mark_abstract">
-                                        <input type="text" class="form-control" v-model="form.submit.content.abstract"
-                                               aria-describedby="" placeholder="请输入内容">
-                                    </div>
-                                    <div class="form-group" v-if="form.mark.mark_source_url">
-                                        <input type="text" class="form-control" v-model="form.submit.content.source_url"
-                                               aria-describedby="" placeholder="请输入地址">
-                                    </div>
-                                    <div class="row gutters"
-                                         v-for="(connection,connections_index) in form.mark.relations">
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
-                                             v-if="connection.mark_type == 'tags'">
-                                            <div class="card">
-                                                <multiselect
-                                                        v-model="form.submit.connections[connection.key]"
-                                                        select-label="回车选择!"
-                                                        placeholder="下拉框选择"
-                                                        label="title" track-by="id"
-                                                        @remove="deleteOption"
-                                                        :options="getAllSelectOptionsBy(connection.mark_section + '/' + connection.mark_env)"
-                                                        :multiple="true"
-                                                        :taggable="true"
-                                                ></multiselect>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
-                                             v-if="connection.mark_type == 'thumbnails'">
-                                            <!-- Card start -->
-                                            <div class="card">
-                                                <file-pond :imagePreviewMaxHeight="50"
-                                                           credits=""
-                                                           label-idle="拖拽或者复制文件上传..." allow-multiple="true"
-                                                           :server="server(connection.mark_section + '/' + connection.mark_env,index,connection.key,connection.key)"
-                                                           instantUpload="false"/>
-                                                </file-pond>
-                                                <div class="card-body">
-                                                    <div class="row gutters" v-if="modelShow">
-                                                        <div v-for="(file,index) in getContentThumbnailBy(form.submit.content.id, connection.mark_section + '/' + connection.mark_env)"
-                                                             class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2">
-                                                            <img class="img-thumbnail" :src="getImgUrl(file.source)">
-                                                            <button class="btn btn-danger"
-                                                                    v-on:click="deleteContentAttachments(file.id, form.submit.content.id)">
-                                                                删除
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="table-responsive" v-if="!isEdit && form.mark.multiple != 'false'">
+                                            <table class="table mb-0">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">id</th>
+                                                    <th scope="col">标题</th>
+                                                    <th scope="col">摘要</th>
+                                                    <th scope="col">日期</th>
+                                                    <th scope="col">
+                                                        编辑内容
+                                                    </th>
+                                                    <th scope="col">
+                                                        删除内容
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr v-for="(row,row_index) in template.rows[form.mark.key]">
+                                                    <th scope="row">{{row.content.id}}</th>
+                                                    <td>{{row.content.title}}</td>
+                                                    <td>{{row.content.abstract}}</td>
+                                                    <td>{{row.content.updated_at}}</td>
+                                                    <td>
+                                                        <div class="btn-group d-none d-sm-inline-block">
+                                                            <button @click="()=>editRow(row_index,index,form.mark.mark_section,form.mark.mark_env)"
+                                                                    type="button"
+                                                                    class="btn btn-soft-info btn-sm">编辑
                                                             </button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group d-none d-sm-inline-block">
+                                                            <button @click="()=>deleteRow(row.content.id)"
+                                                                    type="button"
+                                                                    class="btn btn-soft-danger btn-sm">删除
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-if="isEdit || form.mark.multiple == 'false'" class="card">
+                                    <div class="card-body">
+                                        <h4 v-if="form.mark.mark_env_label"
+                                            class="mb-3 header-title mt-0">{{form.mark.mark_env_label}}</h4>
+                                        <div class="form-group" v-if="form.mark.mark_title">
+                                            <input type="text" class="form-control" v-model="form.submit.content.title"
+                                                   aria-describedby="" placeholder="请输入内容">
+                                        </div>
+                                        <div class="form-group" v-if="form.mark.mark_abstract">
+                                            <input type="text" class="form-control" v-model="form.submit.content.abstract"
+                                                   aria-describedby="" placeholder="请输入内容">
+                                        </div>
+                                        <div class="form-group" v-if="form.mark.mark_source_url">
+                                            <input type="text" class="form-control" v-model="form.submit.content.source_url"
+                                                   aria-describedby="" placeholder="请输入地址">
+                                        </div>
+                                        <div class="row gutters"
+                                             v-for="(connection,connections_index) in form.mark.relations">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
+                                                 v-if="connection.mark_type == 'tags'">
+                                                <div class="card">
+                                                    <multiselect
+                                                            v-model="form.submit.connections[connection.key]"
+                                                            select-label="回车选择!"
+                                                            placeholder="下拉框选择"
+                                                            label="title" track-by="id"
+                                                            @remove="deleteOption"
+                                                            :options="getAllSelectOptionsBy(connection.mark_section + '/' + connection.mark_env)"
+                                                            :multiple="true"
+                                                            :taggable="true"
+                                                    ></multiselect>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
+                                                 v-if="connection.mark_type == 'thumbnails'">
+                                                <!-- Card start -->
+                                                <div class="card">
+                                                    <file-pond :imagePreviewMaxHeight="50"
+                                                               credits=""
+                                                               label-idle="拖拽或者复制文件上传..." allow-multiple="true"
+                                                               :server="server(connection.mark_section + '/' + connection.mark_env,index,connection.key,connection.key)"
+                                                               instantUpload="false"/>
+                                                    </file-pond>
+                                                    <div class="card-body">
+                                                        <div class="row gutters" v-if="modelShow">
+                                                            <div v-for="(file,index) in getContentThumbnailBy(form.submit.content.id, connection.mark_section + '/' + connection.mark_env)"
+                                                                 class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2">
+                                                                <img class="img-thumbnail" :src="getImgUrl(file.source)">
+                                                                <button class="btn btn-danger"
+                                                                        v-on:click="deleteContentAttachments(file.id, form.submit.content.id)">
+                                                                    删除
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!-- Card end -->
                                             </div>
-                                            <!-- Card end -->
                                         </div>
-                                    </div>
-                                    <div class="form-group" v-if="form.mark.mark_body">
-                                        <quill-editor class="editor"
-                                                      v-model="form.submit.content.body"
-                                                      ref="myQuillEditor"
-                                                      @blur="onEditorBlur"
-                                                      @focus="onEditorFocus"
-                                                      @ready="onEditorReady">
-                                        </quill-editor>
+                                        <div class="form-group" v-if="form.mark.mark_body">
+                                            <quill-editor class="editor"
+                                                          v-model="form.submit.content.body"
+                                                          ref="myQuillEditor"
+                                                          @blur="onEditorBlur"
+                                                          @focus="onEditorFocus"
+                                                          @ready="onEditorReady">
+                                            </quill-editor>
+                                        </div>
                                     </div>
                                 </div>
 
